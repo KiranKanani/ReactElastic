@@ -83,7 +83,7 @@ class RoleListComponent extends React.Component<RoleListProp, RoleListState> {
       style: { width: '120px' },
       sortBy: 'itemID',
       injectBody: (value: IRoleDef) =>
-        <Badge working={value.processing} status={AllowedEntityStatusColor[value.processing ? 8 : getBadgeStatus(value)]}>{value.processing ? value.processing : getStatus(value)}</Badge>,
+        <Badge working={value._source.processing} status={AllowedEntityStatusColor[value._source.processing ? 8 : getBadgeStatus(value._source)]}>{value._source.processing ? value._source.processing : getStatus(value._source)}</Badge>,
     }, {
       label: 'Type',
       key: 'allowedMemberTypes',
@@ -197,10 +197,10 @@ class RoleListComponent extends React.Component<RoleListProp, RoleListState> {
 
               <div className={searchFieldStyle}>
                 <TextField
-                  disabled
                   label="Find a Role..."
+                  onChange = {()=>{}}
                   suffix={<Icon source="search" componentColor="inkLighter"/>}
-                  value={filterConfig.searchKey}
+                  //value={filterConfig.searchKey}
                 />
               </div>
 
@@ -232,7 +232,7 @@ class RoleListComponent extends React.Component<RoleListProp, RoleListState> {
                   column={this.nestedColumnConfig}
                   filterData={filterConfig}
                   rowAction={[]}
-                  rowCallbackValue="id"
+                  rowCallbackValue="_source.id"
                   selectRow="checkbox"
                   selectRowCallback={this.handleSelectRowCallback}
                   theme={TableStyle}

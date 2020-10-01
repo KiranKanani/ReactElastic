@@ -43,8 +43,8 @@ function searchRoles(req, res, next) {
         body: req.body,
         index: 'roledefs'
       })
-        .then((e) => {console.log(e); res.json(e)})
-        .catch((c) => {console.log(c); res.json(c)});
+        .then((e) => {/*console.log(e);*/ res.json(e)})
+        .catch((c) => {/*console.log(e); res.json(e)*/});
       // axios.default.get(bonsai_url + "/_search?pretty", {
       //   data: req.body,
       //   method: 'GET',
@@ -57,7 +57,7 @@ function searchRoles(req, res, next) {
   }
 }
 
-app.get('/searchRoles', function (req, res, next) { searchRoles(req, res, next); });
+app.post('/searchRoles', function (req, res, next) { searchRoles(req, res, next); });
 app.get('/*', function (req, res, next) { fetch_fn(req, res, next); });
 
 var listenPort = process.env.PORT || 3000
