@@ -43,8 +43,8 @@ function searchRoles(req, res, next) {
         body: req.body,
         index: 'roledefs'
       })
-        .then((e) => {/*console.log(e);*/ res.json(e)})
-        .catch((c) => {/*console.log(e); res.json(e)*/});
+        .then((e) => {console.log(e); res.json(e)})
+        .catch((c) => {console.log(c); res.json(c)});
       // axios.default.get(bonsai_url + "/_search?pretty", {
       //   data: req.body,
       //   method: 'GET',

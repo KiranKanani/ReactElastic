@@ -2,7 +2,6 @@ import { ICommonEnumInterface } from 'Types/Domain';
 
 // return allowedMemberTypes type
 export const getAllowedMemberType = (currentEntityMember?: ICommonEnumInterface) => {
-  console.log("currentEntityMember",currentEntityMember.itemID);
   if(currentEntityMember.itemID === 3) {
     return  "Internal or External";
   } else if(currentEntityMember.itemID === 7){
@@ -27,8 +26,6 @@ export const getBadgeStatus = (value: any): number => {
 
 // Function return badge status itemName
 export const getStatus = (value: any): string => {
-  console.log("enter");
-  
   if (value.locked && value.locked.itemID === 0) {
     if (value.pendingAction && (value.pendingAction.itemName !== "None" && value.pendingAction.itemName !== "Create")) {
       return value.pendingAction.itemName;

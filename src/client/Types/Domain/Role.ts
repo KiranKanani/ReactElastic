@@ -1,7 +1,7 @@
 import { ICommonEnumInterface, IEntityObject } from '.';
 
 export interface IRoleDef {
-  _source?:any;
+  _source: IRoleDef;
   activeVersionStatus: ICommonEnumInterface
   allowedMemberTypes: ICommonEnumInterface;
   appDef?: IEntityObject;

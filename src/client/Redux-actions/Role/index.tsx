@@ -1,6 +1,6 @@
 import axios from 'axios'
-
-export const getRoleData = () => {
+const BASE_URL = "http://localhost:3000/searchRoles";
+export const getRoleData = (entityStateId:number) => {
     return async (dispatch) => {
         const query = {
             from:0,
@@ -9,22 +9,46 @@ export const getRoleData = () => {
               bool:{
                 filter:[{
                   match: {
-                    "entityState.itemID":5
+                    "entityState.itemID":entityStateId
                   }
                 }],
-                // must_not:[{
-                //   match: {
-                //     name: "ano_role-name 42969"
-                //   }
-                // }]
               }
             }
           };
           
-          axios.post('http://localhost:3000/searchRoles',query)
+          axios.post(BASE_URL,query)
             .then((res) => {
                 dispatch({type:"data",payload:res.data.hits.hits})
-              console.log(res.data);
             });
     }
+}
+
+//search filter
+export const getSearchRoleData = (searchKey:string) => {
+  return async (dispatch) => {
+      const query = {
+          from:0,
+          size:20,
+          query: {
+            bool:{
+              should:[{
+                match_phrase: {
+                  description:searchKey
+                }
+              },
+              {
+                match_phrase: {
+                  name:searchKey
+                }
+              }
+            ],
+            }
+          }
+        };
+        
+        axios.post(BASE_URL,query)
+          .then((res) => {
+              dispatch({type:"data",payload:res.data.hits.hits})
+          });
+  }
 }

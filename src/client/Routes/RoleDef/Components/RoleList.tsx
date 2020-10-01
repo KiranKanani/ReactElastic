@@ -28,7 +28,7 @@ import {
   getStatus,
 } from '../../../Common/Utilities';
 
-import {getRoleData} from '../../../Redux-actions/Role'
+import {getRoleData,getSearchRoleData} from '../../../Redux-actions/Role'
 
 import { RoleListState } from './RoleListState';
 import { RoleListProp } from './RoleListProp';
@@ -62,7 +62,7 @@ class RoleListComponent extends React.Component<RoleListProp, RoleListState> {
       className: '',
       sortBy: 'keyword',
       style: { width: '160px' },
-    injectBody:(value:any) => <span>{value._source.id}</span>
+    injectBody:(value:IRoleDef) => <span>{value._source.id}</span>
     },
     {
       label: 'Name',
@@ -70,20 +70,20 @@ class RoleListComponent extends React.Component<RoleListProp, RoleListState> {
       className: '',
       sortBy: 'keyword',
       style: { width: '160px' },
-      injectBody:(value:any) => <span>{value._source.name}</span>
+      injectBody:(value:IRoleDef) => <span>{value._source.name}</span>
     }, {
       label: 'Description',
       key: 'description',
       noSort: true,
       style: { width: '300px' },
-      injectBody:(value:any) => <span>{value._source.description}</span>
+      injectBody:(value:IRoleDef) => <span>{value._source.description}</span>
     }, {
       label: 'Status',
       key: 'entityState',
       style: { width: '120px' },
       sortBy: 'itemID',
       injectBody: (value: IRoleDef) =>
-        <Badge working={value._source.processing} status={AllowedEntityStatusColor[value._source.processing ? 8 : getBadgeStatus(value._source)]}>{value._source.processing ? value._source.processing : getStatus(value._source)}</Badge>,
+        <Badge working={value.processing} status={AllowedEntityStatusColor[value.processing ? 8 : getBadgeStatus(value)]}>{value.processing ? value.processing : getStatus(value)}</Badge>,
     }, {
       label: 'Type',
       key: 'allowedMemberTypes',
@@ -94,11 +94,7 @@ class RoleListComponent extends React.Component<RoleListProp, RoleListState> {
   ];
 
   // function needs to be called on onChange for checkBox
-  private bulkOptions = () => {
-    return [{
-      content: <Checkbox label={'Show Deleted'} />
-    }]
-  };
+ 
 
   constructor(props: RoleListProp) {
     super(props);
@@ -113,6 +109,7 @@ class RoleListComponent extends React.Component<RoleListProp, RoleListState> {
       callChildCallback: false,
       dropdownEle: {},
       editMember: false,
+      showDeleted:false,
       filterConfig: {
         searchKey: '',
         search: false,
@@ -123,18 +120,37 @@ class RoleListComponent extends React.Component<RoleListProp, RoleListState> {
       nestedChildData: [],
     };
   }
+
   componentWillMount() {
-    this.props.getData();
-    console.log("good",this.props.roleData)
+    this.props.getData(5);
   }
   UNSAFE_componentWillReceiveProps(){
-    console.log("good",this.props.roleData)
   }
   // Callback function when any row gets selected
   handleSelectRowCallback = (val: React.ReactText[]) => {
 
   }
+  handleSearchValueChange = (value) =>{
+    let {filterConfig} = this.state;
+    filterConfig.searchKey = value;
+    this.setState({
+      filterConfig:filterConfig
+    })
+  }
 
+  handleSearchFilter = () =>{
+    this.props.getFilterData(this.state.filterConfig.searchKey);
+  }
+
+  handleShowDeleted = () => {
+    this.setState({showDeleted:!this.state.showDeleted})
+    if(!this.state.showDeleted){
+      this.props.getData(7);
+    }
+    else{
+      this.props.getData(5);
+    }
+  }
   // Toggle dropdowns present in this component
   toggleDropdown = (event: React.FormEvent<HTMLElement>, currentDropdown: string) => {
     this.setState({
@@ -142,7 +158,11 @@ class RoleListComponent extends React.Component<RoleListProp, RoleListState> {
     });
   }
 
-
+  private bulkOptions = () => {
+    return [{
+      content: <Checkbox label={'Show Deleted' } onChange={this.handleShowDeleted} checked={this.state.showDeleted}/>
+    }]
+  };
   /**
    * Render the component to the DOM
    * @returns {}
@@ -151,7 +171,6 @@ class RoleListComponent extends React.Component<RoleListProp, RoleListState> {
     const { actionInProgress, bulkAction, dropdownEle, filterConfig, hideRow, loadingRole } = this.state;
     const {
       roleDefs,
-      roleData,
       theme,
     } = this.props;
 
@@ -197,10 +216,11 @@ class RoleListComponent extends React.Component<RoleListProp, RoleListState> {
 
               <div className={searchFieldStyle}>
                 <TextField
-                  label="Find a Role..."
-                  onChange = {()=>{}}
-                  suffix={<Icon source="search" componentColor="inkLighter"/>}
-                  //value={filterConfig.searchKey}
+                  disabled={false}
+                  label="Find a Role...  "
+                  suffix={<Icon source="search" componentColor="inkLighter" onClick = {this.handleSearchFilter}/>}
+                  onChange={this.handleSearchValueChange}
+                  value={filterConfig.searchKey}
                 />
               </div>
 
@@ -246,11 +266,12 @@ class RoleListComponent extends React.Component<RoleListProp, RoleListState> {
 }
 const mapDispatchToProps = (dispatch) =>{
   return {
-    getData:async ()=>{await dispatch(getRoleData())}
+    getData:async (entityStateId:number)=>{await dispatch(getRoleData(entityStateId as number))},
+    getFilterData:async (searchkey:string)=>{await dispatch(getSearchRoleData(searchkey as string))}
   }
 }
 const mapStateToProps = (state) =>({
   roleDefs:state.Role.roleData
 })
 const App = themr(ROLE, baseTheme)(RoleListComponent) as ThemedComponentClass<RoleListProp, RoleListState>;
-export default connect<StateFromProps,DispatchFromProps, any>(mapStateToProps,mapDispatchToProps) (App as any);
+export default connect<StateFromProps,DispatchFromProps,any>(mapStateToProps,mapDispatchToProps) (App as ThemedComponentClass<RoleListProp, RoleListState>);
