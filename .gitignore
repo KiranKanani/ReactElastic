@@ -234,8 +234,6 @@ FakesAssemblies/
 
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
-node_modules/
-research/node_modules
 
 # Typescript v1 declaration files
 typings/
@@ -291,7 +289,6 @@ __pycache__/
 *~
 .DS_Store
 npm-debug.log*
-node_modules
 amd/
 !tools/amd/
 lib/
@@ -312,7 +309,6 @@ logs
 *.log
 npm-debug.log*
 *.log
-node_modules
 /build
 /build-intermediate
 /types
